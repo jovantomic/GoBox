@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+dist/
+*.out
+
+# Go binaries and test artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.prof
+
+# Archives
+*.tar.gz
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
