@@ -1,6 +1,6 @@
 # diary
 
-## day 1 — mar 16
+## day 1 - mar 16
 
 set up dev environment. multipass VM on mac because apple silicon cant run linux namespaces natively. vs code remote ssh into ubuntu VM, go 1.22.
 
@@ -14,7 +14,7 @@ UTS + PID + mount namespaces finished. chroot into alpine rootfs. /proc mount in
 
 mounted /proc inside the container but without a proper mount namespace, so it overwrote the host's /proc. suddenly nothing worked. go, ls, /proc/self/exe, all broken. fixed by mounting it back manually in terminal.
 
-## day 2 — mar 17
+## day 2 - mar 17
 
 cgroups v2. wrote a `cg()` function that creates `/sys/fs/cgroup/gobox`.
 
@@ -22,7 +22,7 @@ tested with fork bomb.
 
 also added memory cgroup. memory.max set to 100MB. this was easy compared to day 1.
 
-## day 3 — mar 18
+## day 3 - mar 18
 
 networking was confusing at first but fun at the end.
 
@@ -34,7 +34,7 @@ assigned IPs. host side 10.10.10.1, container side 10.10.10.2. container can pin
 
 had a race condition. child needs to wait for host to create and move the veth before it can configure its end. started with `time.Sleep(time.Second)` which felt wrong.
 
-evening was all about cleanup and tooling.
+evening session:
 
 refactored single main.go into multiple files. main.go, network.go, cgroup.go, const.go. all still `package main`, just cleaner. dont see why i need folders yet, maybe later when theres more code.
 
