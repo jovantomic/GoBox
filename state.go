@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -40,8 +41,9 @@ func newContainerState(command string) *ContainerState {
 		Created: time.Now(),
 	}
 }
+
 func getContainerById(id string) *ContainerState {
-	data, err := os.ReadFile("/var/lib/gobox/" + id + ".json")
+	data, err := os.ReadFile(filepath.Join(stateDir, id, "state.json"))
 	if err != nil {
 		return nil
 	}
@@ -50,17 +52,16 @@ func getContainerById(id string) *ContainerState {
 	return &state
 }
 
-func deleteContainerState(id string) {
-	os.Remove("/var/lib/gobox/" + id + ".json")
-}
-
 func saveJSON(state *ContainerState) {
-	dir := "/var/lib/gobox/"
+	dir := filepath.Join(stateDir, state.Id)
 	os.MkdirAll(dir, 0755)
-
 	data, err := json.MarshalIndent(state, "", "  ")
 	if err != nil {
 		panic(err)
 	}
-	os.WriteFile(dir+state.Id+".json", data, 0644)
+	must(os.WriteFile(filepath.Join(dir, "state.json"), data, 0644))
+}
+
+func deleteContainerState(id string) {
+	os.RemoveAll(filepath.Join(stateDir, id))
 }

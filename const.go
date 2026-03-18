@@ -10,6 +10,7 @@ const (
 	memoryLimit = "100m"
 	getawayIp   = "10.10.10.1"
 	pidsLimit   = "20"
+	stateDir    = "/var/lib/gobox/containers"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

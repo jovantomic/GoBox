@@ -50,3 +50,7 @@ idk if i like oop in go still
 
 each container gets its own cgroup path based on its ID. 
 added CLI flags for memory and pids limits, `gobox run -m 200m -p 10 /bin/sh` works now.
+
+added overlayfs. each container gets its own writable layer on top of a shared readonly alpine rootfs. files created in one container dont leak to others or to the base image. also restructured state to use per-container directories.
+
+It was a BIG day, i think i have 6-7h today on this project, but i learned a lot!

@@ -44,6 +44,7 @@ func run(args []string, memory string, pids string) {
 	setupHostNet(cmd.Process.Pid)
 
 	cmd.Wait()
+	cleanupOverlay(state.Id)
 
 	state.Status = "stopped"
 	saveJSON(state)
@@ -62,7 +63,8 @@ func child(args []string) {
 	setupContainerNet()
 
 	must(syscall.Sethostname([]byte(hostname)))
-	must(syscall.Chroot(rootfsPath))
+	merged := setupOverlay(id)
+	must(syscall.Chroot(merged))
 	must(syscall.Chdir("/"))
 	must(syscall.Mount("proc", "proc", "proc", 0, ""))
 
