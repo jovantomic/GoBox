@@ -12,3 +12,5 @@ const (
 	getawayIp   = "10.10.10.1"
 	pidsLimit   = "20"
 )
+
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

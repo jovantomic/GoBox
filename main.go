@@ -17,9 +17,15 @@ func main() {
 	executeCLI()
 }
 
-func run() {
-	fmt.Println("Running the application...", os.Args[2:], "PID:", os.Getpid())
-	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, os.Args[2:]...)...)
+func run(args []string) {
+	state := newContainerState(args[0])
+	state.Status = "running"
+	saveJSON(state)
+	fmt.Printf("Container %s started\n", state.Id)
+
+	fmt.Println("Running the application...", args, "PID:", os.Getpid())
+	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, args...)...)
+
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -32,11 +38,15 @@ func run() {
 	}
 
 	must(cmd.Start())
+	state.Pid = cmd.Process.Pid
+	saveJSON(state)
 
 	setupHostNet(cmd.Process.Pid)
 
 	cmd.Wait()
 
+	state.Status = "stopped"
+	saveJSON(state)
 	cleanupNet()
 	os.Remove(cgroupPath)
 }

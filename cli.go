@@ -20,7 +20,7 @@ var runCmd = &cobra.Command{
 	Short: "Run a command in a container",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		run()
+		run(args)
 	},
 }
 
@@ -37,8 +37,20 @@ var psCmd = &cobra.Command{
 	Use:   "ps",
 	Short: "List running containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ID\t\tSTATUS\t\tCOMMAND")
-		// treba implementirati kada dodam vise od jendogh kontejnera
+		files, err := os.ReadDir("/var/lib/gobox/")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%-20s %-20s %-20s %-20s\n", "ID", "STATUS", "COMMAND", "CREATED")
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+			state := getContainerById(file.Name()[:len(file.Name())-5]) // remove .json
+			if state != nil {
+				fmt.Printf("%-20s %-20s %-20s %-20s\n", state.Id, state.Status, state.Command, state.Created.Format("2006-01-02 15:04:05"))
+			}
+		}
 	},
 }
 
