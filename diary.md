@@ -42,4 +42,8 @@ set up cobra for CLI. first time making a real CLI tool. `./gobox run`, `./gobox
 
 also learned difference between `net.ParseIP()` and `netlink.ParseAddr()` the hard way. one wants bare IP, other wants CIDR. spent too long on that.
 
-next up is container IDs and state.json so i can track multiple containers and build `gobox ps` for real.
+added container state tracking. each container gets a random ID, saves a JSON file to `/var/lib/gobox/` with status, command, PID, and timestamp.
+
+`gobox ps` now lists all containers for real. 
+
+idk if i like oop in go still
