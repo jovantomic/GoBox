@@ -25,3 +25,5 @@ sudo ./gobox run /bin/sh
 ## dev environment
 
 multipass VM on mac — apple silicon can't run linux namespaces natively. vs code remote SSH into ubuntu VM.
+
+[Developer diary](diary.md)
