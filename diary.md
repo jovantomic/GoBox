@@ -64,4 +64,10 @@ added new CLI commands and implemented lifecycle helpers in state handling
 stdout/stderr now goes both to terminal and per-container `log.txt` 
 
 evening session:
-OCI IMAGE PULL!!!!!!!!!!! 
+OCI IMAGE PULL!!!!!!!!!!!
+
+this was actually so fun the whole pipiline and how they made id is impresive
+
+special tnx to claude for generating getImageLayers function, i had bug and would get "found 0 layers:, because of the amd64 digest 
+
+basically some images returns a manifest list, so wee need to check if we get layers of platfroms, then we can find platform digest, and send a new requst to get the actual layer list

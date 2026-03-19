@@ -76,15 +76,34 @@ var logCmd = &cobra.Command{
 	},
 }
 
+var pullCmd = &cobra.Command{
+	Use:   "pull [image]",
+	Short: "Pull an image from Docker Hub",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		imageName := args[0]
+		fmt.Printf("Pulling image %s...\n", imageName)
+		err := pullImage(imageName)
+		if err != nil {
+			fmt.Printf("Error pulling image: %v\n", err)
+			return
+		}
+		fmt.Printf("Image %s pulled successfully!\n", imageName)
+
+	},
+}
+
 func init() {
 	runCmd.Flags().StringP("memory", "m", "100m", "Memory limit")
 	runCmd.Flags().StringP("pids", "p", "20", "Max number of processes")
+	runCmd.Flags().StringP("image", "i", "alpine:latest", "Image to use for the container")
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(childCmd)
 	rootCmd.AddCommand(psCmd)
 	rootCmd.AddCommand(rmCmd)
 	rootCmd.AddCommand(logCmd)
+	rootCmd.AddCommand(pullCmd)
 
 }
 
