@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"os"
 	"path/filepath"
+	"syscall"
 	"time"
 )
 
@@ -63,5 +65,68 @@ func saveJSON(state *ContainerState) {
 }
 
 func deleteContainerState(id string) {
+
 	os.RemoveAll(filepath.Join(stateDir, id))
+}
+
+func showLogs(id string) {
+	state := getContainerById(id)
+	if state == nil {
+		fmt.Printf("Container with ID %s not found\n", id)
+		return
+	}
+	logData, err := os.ReadFile(filepath.Join(stateDir, id, "log.txt"))
+	if err != nil {
+		fmt.Printf("No logs found for container %s\n", id)
+		return
+	}
+	fmt.Printf("Logs for container %s:\n%s\n", id, string(logData))
+}
+
+func stopContainer(id string) {
+	state := getContainerById(id)
+	if state == nil {
+		fmt.Printf("Container with ID %s not found\n", id)
+		return
+	}
+	if state.Status != "running" {
+		fmt.Printf("Container with ID %s is not running\n", id)
+		return
+	}
+	syscall.Kill(state.Pid, syscall.SIGKILL)
+	state.Status = "stopped"
+	state.Pid = 0
+	saveJSON(state)
+}
+
+func removeContainer(id string) {
+	state := getContainerById(id)
+	if state == nil {
+		fmt.Printf("Container with ID %s not found\n", id)
+		return
+	}
+	if state.Status == "running" {
+		fmt.Printf("Container with ID %s is running, stop it before removing\n", id)
+		return
+	}
+	deleteContainerState(id)
+	fmt.Printf("Container %s removed\n", id)
+
+}
+
+func getAllContainers() []*ContainerState {
+	entries, err := os.ReadDir(stateDir)
+	if err != nil {
+		return nil
+	}
+	var containers []*ContainerState
+	for _, entry := range entries {
+		if entry.IsDir() {
+			state := getContainerById(entry.Name())
+			if state != nil {
+				containers = append(containers, state)
+			}
+		}
+	}
+	return containers
 }

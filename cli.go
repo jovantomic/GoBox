@@ -38,20 +38,41 @@ var psCmd = &cobra.Command{
 	Use:   "ps",
 	Short: "List running containers",
 	Run: func(cmd *cobra.Command, args []string) {
-		files, err := os.ReadDir("/var/lib/gobox/")
-		if err != nil {
-			panic(err)
+		containers := getAllContainers()
+		if len(containers) == 0 {
+			fmt.Println("No containers found")
+			return
 		}
-		fmt.Printf("%-20s %-20s %-20s %-20s\n", "ID", "STATUS", "COMMAND", "CREATED")
-		for _, file := range files {
-			if file.IsDir() {
-				continue
-			}
-			state := getContainerById(file.Name()[:len(file.Name())-5])
-			if state != nil {
-				fmt.Printf("%-20s %-20s %-20s %-20s\n", state.Id, state.Status, state.Command, state.Created.Format("2006-01-02 15:04:05"))
-			}
+		fmt.Printf("%-12s %-10s %-20s %s\n", "ID", "STATUS", "COMMAND", "CREATED")
+		for _, c := range containers {
+			fmt.Printf("%-12s %-10s %-20s %s\n", c.Id, c.Status, c.Command, c.Created.Format("2006-01-02 15:04:05"))
 		}
+	},
+}
+
+var stopCmd = &cobra.Command{
+	Use:   "stop [id]",
+	Short: "Stop a running container",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		stopContainer(args[0])
+	},
+}
+var rmCmd = &cobra.Command{
+	Use:   "rm [id]",
+	Short: "Remove a stopped container",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		removeContainer(args[0])
+	},
+}
+
+var logCmd = &cobra.Command{
+	Use:   "logs [id]",
+	Short: "Show logs of a container",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		showLogs(args[0])
 	},
 }
 
@@ -59,8 +80,12 @@ func init() {
 	runCmd.Flags().StringP("memory", "m", "100m", "Memory limit")
 	runCmd.Flags().StringP("pids", "p", "20", "Max number of processes")
 	rootCmd.AddCommand(runCmd)
+	rootCmd.AddCommand(stopCmd)
 	rootCmd.AddCommand(childCmd)
 	rootCmd.AddCommand(psCmd)
+	rootCmd.AddCommand(rmCmd)
+	rootCmd.AddCommand(logCmd)
+
 }
 
 func executeCLI() {

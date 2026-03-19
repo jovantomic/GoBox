@@ -54,3 +54,14 @@ added CLI flags for memory and pids limits, `gobox run -m 200m -p 10 /bin/sh` wo
 added overlayfs. each container gets its own writable layer on top of a shared readonly alpine rootfs. files created in one container dont leak to others or to the base image. also restructured state to use per-container directories.
 
 It was a BIG day, i think i have 6-7h today on this project, but i learned a lot!
+
+## day 4 - mar 19
+
+improved `gobox ps` so it reads real container state directories and prints clean columns for id/status/command/created.
+
+added new CLI commands and implemented lifecycle helpers in state handling
+
+stdout/stderr now goes both to terminal and per-container `log.txt` 
+
+evening session:
+OCI IMAGE PULL!!!!!!!!!!! 

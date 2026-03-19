@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"syscall"
 )
 
@@ -27,8 +29,6 @@ func run(args []string, memory string, pids string) {
 	cmd := exec.Command("/proc/self/exe", append([]string{"child", state.Id, memory, pids}, args...)...)
 
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS |
 			syscall.CLONE_NEWPID |
@@ -37,6 +37,10 @@ func run(args []string, memory string, pids string) {
 		Unshareflags: syscall.CLONE_NEWNS,
 	}
 
+	logFile, _ := os.Create(filepath.Join(stateDir, state.Id, "log.txt"))
+	defer logFile.Close()
+	cmd.Stdout = io.MultiWriter(os.Stdout, logFile)
+	cmd.Stderr = io.MultiWriter(os.Stderr, logFile)
 	must(cmd.Start())
 	state.Pid = cmd.Process.Pid
 	saveJSON(state)
