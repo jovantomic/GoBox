@@ -6,7 +6,7 @@ import (
 	"syscall"
 )
 
-func setupOverlay(id string) string {
+func setupOverlay(id string, lower string) string {
 	base := filepath.Join(stateDir, id)
 	upper := filepath.Join(base, "upper")
 	work := filepath.Join(base, "work")
@@ -16,7 +16,7 @@ func setupOverlay(id string) string {
 	os.MkdirAll(work, 0755)
 	os.MkdirAll(merged, 0755)
 
-	opts := "lowerdir=" + rootfsPath + ",upperdir=" + upper + ",workdir=" + work
+	opts := "lowerdir=" + lower + ",upperdir=" + upper + ",workdir=" + work
 	must(syscall.Mount("overlay", merged, "overlay", 0, opts))
 
 	return merged

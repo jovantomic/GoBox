@@ -22,7 +22,8 @@ var runCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		memory, _ := cmd.Flags().GetString("memory")
 		pids, _ := cmd.Flags().GetString("pids")
-		run(args, memory, pids)
+		imageName, _ := cmd.Flags().GetString("image")
+		run(args, memory, pids, imageName)
 	},
 }
 var childCmd = &cobra.Command{

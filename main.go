@@ -19,14 +19,20 @@ func main() {
 	executeCLI()
 }
 
-func run(args []string, memory string, pids string) {
+func run(args []string, memory string, pids string, image string) {
+
+	imgPath := rootfsPath
+	if image != "" {
+		imgPath = filepath.Join(imagesDir, image, "rootfs")
+	}
+
 	state := newContainerState(args[0])
 	state.Status = "running"
 	saveJSON(state)
 	fmt.Printf("Container %s started\n", state.Id)
 
 	fmt.Println("Running the application...", args, "PID:", os.Getpid())
-	cmd := exec.Command("/proc/self/exe", append([]string{"child", state.Id, memory, pids}, args...)...)
+	cmd := exec.Command("/proc/self/exe", append([]string{"child", state.Id, memory, pids, imgPath}, args...)...)
 
 	cmd.Stdin = os.Stdin
 	cmd.SysProcAttr = &syscall.SysProcAttr{
@@ -61,13 +67,14 @@ func child(args []string) {
 	id := args[0]
 	memory := args[1]
 	pids := args[2]
-	args = args[3:]
+	imgPath := args[3]
+	args = args[4:]
 
 	cg(id, memory, pids)
 	setupContainerNet()
 
 	must(syscall.Sethostname([]byte(hostname)))
-	merged := setupOverlay(id)
+	merged := setupOverlay(id, imgPath)
 	must(syscall.Chroot(merged))
 	must(syscall.Chdir("/"))
 	must(syscall.Mount("proc", "proc", "proc", 0, ""))
