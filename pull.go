@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 type Layer struct {
@@ -81,13 +82,13 @@ func getImageLayers(imageName, token string) ([]string, error) {
 
 		var digest string
 		for _, m := range mList.Manifests {
-			if m.Platform.Architecture == "amd64" && m.Platform.OS == "linux" {
+			if m.Platform.Architecture == runtime.GOARCH && m.Platform.OS == "linux" {
 				digest = m.Digest
 				break
 			}
 		}
 		if digest == "" {
-			return nil, fmt.Errorf("no linux/amd64 manifest found")
+			return nil, fmt.Errorf("no %s/%s manifest found", runtime.GOOS, runtime.GOARCH)
 		}
 
 		req2, err := http.NewRequest("GET", "https://registry-1.docker.io/v2/library/"+imageName+"/manifests/"+digest, nil)

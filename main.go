@@ -74,7 +74,12 @@ func child(args []string) {
 	setupContainerNet()
 
 	must(syscall.Sethostname([]byte(hostname)))
+	//fmt.Println("DEBUG: imgPath =", imgPath)
 	merged := setupOverlay(id, imgPath)
+	//fmt.Println("DEBUG: merged =", merged)
+
+	//fmt.Println("DEBUG: merged contents:", len(entries), "entries")
+
 	must(syscall.Chroot(merged))
 	must(syscall.Chdir("/"))
 	must(syscall.Mount("proc", "proc", "proc", 0, ""))
@@ -83,5 +88,6 @@ func child(args []string) {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Run()
+	//err := cmd.Run()
+	//fmt.Println("DEBUG: cmd.Run error:", err)
 }
