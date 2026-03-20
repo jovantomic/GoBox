@@ -34,7 +34,7 @@ assigned IPs. host side 10.10.10.1, container side 10.10.10.2. container can pin
 
 had a race condition. child needs to wait for host to create and move the veth before it can configure its end. started with `time.Sleep(time.Second)` which felt wrong.
 
-evening session:
+### evening session:
 
 refactored single main.go into multiple files. main.go, network.go, cgroup.go, const.go. all still `package main`, just cleaner. dont see why i need folders yet, maybe later when theres more code.
 
@@ -63,7 +63,7 @@ added new CLI commands and implemented lifecycle helpers in state handling
 
 stdout/stderr now goes both to terminal and per-container `log.txt` 
 
-evening session:
+### evening session:
 OCI IMAGE PULL!!!!!!!!!!!
 
 this was actually so fun the whole pipiline and how they made id is impresive
@@ -71,3 +71,13 @@ this was actually so fun the whole pipiline and how they made id is impresive
 special tnx to claude for generating getImageLayers function, i had bug and would get "found 0 layers:, because of the amd64 digest 
 
 basically some images returns a manifest list, so wee need to check if we get layers of platfroms, then we can find platform digest, and send a new requst to get the actual layer list
+
+## day 5 - mar 20
+
+had a bug where container would start but immediately exit — `exec format error`. turned out i was pulling amd64 images on an arm64 VM. fixed by using `runtime.GOARCH` to auto-detect platform instead of hardcoding amd64.
+
+learned how tar.gz extraction works in go
+
+i think the first version is completed, still have to do things like exec, checkpoint and migrate and Goboxfile.
+
+

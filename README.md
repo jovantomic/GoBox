@@ -4,14 +4,18 @@ container runtime from scratch in Go. why? sounded fun and wanted to learn go
 
 ## what works
 
-- PID namespace — container only sees its own processes
-- UTS namespace — container gets its own hostname
-- Mount namespace — isolated /proc, no leaking into host
-- Network namespace — veth pair, container has its own network stack
-- Chroot — alpine rootfs, fully isolated filesystem
-- Cgroups v2 — PID limit (20 processes), memory limit (100MB)
+- **namespaces** — PID, UTS, Mount, Network. container is fully isolated, sees only its own processes, has its own hostname, filesystem, network stack
+- **cgroups v2** — per-container PID and memory limits. two containers won't step on each other
+- **overlayfs** — layered filesystem, base image stays clean, writes go to upper layer
+- **networking** — veth pairs, container gets its own IP, can talk to host
+- **OCI image pull** — pulls images straight from Docker Hub. auth token, manifest resolution (handles multi-arch), layer download, tar.gz extraction. no docker needed
+- **container lifecycle** — run, ps, stop, rm, logs. state tracked in JSON files
 ```bash
-sudo ./gobox run /bin/sh
+sudo ./gobox pull alpine
+sudo ./gobox run -i alpine /bin/sh
+sudo ./gobox ps
+sudo ./gobox stop <id>
+sudo ./gobox logs <id>
 ```
 
 ## stack
@@ -19,8 +23,10 @@ sudo ./gobox run /bin/sh
 - Go 1.22
 - Linux namespaces (CLONE_NEWPID, CLONE_NEWUTS, CLONE_NEWNS, CLONE_NEWNET)
 - cgroups v2 (pids + memory controllers)
+- overlayfs for copy-on-write filesystem
+- Docker Hub Registry API v2 for image pulling
 - vishvananda/netlink for network setup
-- Alpine Linux rootfs
+- Alpine Linux as default base image
 
 ## dev environment
 
