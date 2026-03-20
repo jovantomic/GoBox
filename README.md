@@ -1,6 +1,6 @@
 # GoBox
 
-container runtime from scratch in Go. why? sounded fun and wanted to learn go
+container runtime from scratch in Go. why? sounded fun and for extra project in OS class
 
 ## what works
 
