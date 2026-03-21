@@ -2,6 +2,8 @@ package main
 
 import (
 	"net"
+	"os/exec"
+	"strconv"
 	"time"
 
 	"github.com/vishvananda/netlink"
@@ -51,6 +53,7 @@ func setupContainerNet() {
 		panic(err)
 	}
 	contAddr, err := netlink.ParseAddr(contIP)
+
 	if err != nil {
 		panic(err)
 	}
@@ -61,6 +64,14 @@ func setupContainerNet() {
 		LinkIndex: contVeth.Attrs().Index,
 		Gw:        net.ParseIP(getawayIp),
 	}))
+}
+
+func forwardPort(hostPort, contPort int, contIP string) error {
+	hp := strconv.Itoa(hostPort)
+	cp := strconv.Itoa(contPort)
+	return exec.Command("iptables", "-t", "nat", "-A", "PREROUTING",
+		"-p", "tcp", "--dport", hp,
+		"-j", "DNAT", "--to-destination", contIP+":"+cp).Run()
 }
 
 func cleanupNet() {

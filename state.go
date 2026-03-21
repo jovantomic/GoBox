@@ -20,6 +20,7 @@ type ContainerState struct {
 	Command string    `json:"command"`
 	Created time.Time `json:"created"`
 	Pid     int       `json:"pid,omitempty"`
+	IP      string    `json:"ip,omitempty"`
 }
 
 // charset is in const.go
@@ -42,6 +43,7 @@ func newContainerState(command string) *ContainerState {
 		Status:  "created",
 		Command: command,
 		Created: time.Now(),
+		IP:      contIP,
 	}
 }
 

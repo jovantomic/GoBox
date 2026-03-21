@@ -107,6 +107,27 @@ var execCmd = &cobra.Command{
 	},
 }
 
+var portForwardCmd = &cobra.Command{
+	Use:   "port [id] [host_port]:[container_port]",
+	Short: "Forward a port from host to container",
+	Args:  cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		id := args[0]
+		state := getContainerById(id)
+		if state == nil {
+			fmt.Printf("Container with ID %s not found\n", id)
+			return
+		}
+
+		var hostPort, contPort int
+		fmt.Sscanf(args[1], "%d:%d", &hostPort, &contPort)
+
+		forwardPort(hostPort, contPort, state.IP)
+
+		fmt.Printf("Forwarded %d -> %s:%d\n", hostPort, id, contPort)
+	},
+}
+
 func init() {
 	runCmd.Flags().StringP("memory", "m", "100m", "Memory limit")
 	runCmd.Flags().StringP("pids", "p", "20", "Max number of processes")

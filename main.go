@@ -82,6 +82,7 @@ func child(args []string) {
 
 	must(syscall.Chroot(merged))
 	must(syscall.Chdir("/"))
+	os.WriteFile("/etc/resolv.conf", []byte("nameserver 8.8.8.8\n"), 0644)
 	must(syscall.Mount("proc", "proc", "proc", 0, ""))
 
 	cmd := exec.Command(args[0], args[1:]...)
