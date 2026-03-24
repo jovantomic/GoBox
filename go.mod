@@ -3,8 +3,8 @@ module gobox
 go 1.18
 
 require (
-	github.com/vishvananda/netlink v1.3.1
 	github.com/spf13/cobra v1.10.2
+	github.com/vishvananda/netlink v1.3.1
 )
 
 require (
