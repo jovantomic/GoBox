@@ -9,11 +9,14 @@ container runtime from scratch in Go. why? sounded fun and as a extra project in
 - **overlayfs:** layered filesystem, base image stays clean, writes go to upper layer
 - **networking:** veth pairs, container gets its own IP, can talk to host
 - **OCI image pull:**  pulls images straight from Docker Hub. auth token, manifest resolution (handles multi-arch), layer download, tar.gz extraction. no docker needed
-- **container lifecycle:**  run, ps, stop, rm, logs. state tracked in JSON files
+- **container lifecycle:**  run, ps, stop, rm, logs, checkpoint, restore. state tracked in JSON files
+- **checkpoint/restore:** CRIU-based snapshots of running containers (requires `criu` installed)
 ```bash
 sudo ./gobox pull alpine
 sudo ./gobox run -i alpine /bin/sh
 sudo ./gobox ps
+sudo ./gobox checkpoint <id>
+sudo ./gobox restore <id>
 sudo ./gobox stop <id>
 sudo ./gobox logs <id>
 ```
